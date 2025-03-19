@@ -1,350 +1,439 @@
-Annotations
-Specifies datatype of variables, parameters, function return value and other values
+# TypeScript Notes
+
+## Type Annotations
+
+TypeScript uses type annotations to specify the type of variables, parameters, and return values.
+
+Basic syntax:
 
 ```typescript
-     let/const/var <varible name>: <type> = <value>
+let/const/var variableName: type = value;
 ```
 
-Types:
-number
-string
-boolean
-void: absence of any value
+### Basic Types
 
-In js we can reassign values for var and let and we can also change type while reassign but,
-We cannot reassign diffrent type value to variables
+- `number`: Numeric values
+- `string`: Text values
+- `boolean`: True/false values
+- `void`: Absence of any value
+
+### Type Safety
+
+In TypeScript, you cannot reassign values of different types to typed variables:
 
 ```typescript
 let boolVar: boolean = false;
-
-boolVar = 10; //Error
+boolVar = 10; // Error: Type 'number' is not assignable to type 'boolean'
 ```
 
----
+## Type Inference
 
-Type Inference
-Allows compiler to automatically determine the type of variable based on its value
+TypeScript can automatically determine types based on assigned values:
 
 ```typescript
-let str = "Hello";
-
-str = 10; //Error
+let str = "Hello"; // Type inferred as string
+str = 10; // Error: Type 'number' is not assignable to type 'string'
 ```
 
-Any Type
+### Any Type
+
+The `any` type opts out of type checking:
 
 ```typescript
-let str: any = "Hello";
-str = 10;
+let flexible: any = "Hello";
+flexible = 10; // OK - no type checking
 ```
 
----
+## Functions
 
-Function
-Function parameter annotation
-
-```typescript
-     function <fun_name>(<parameter_name>:<parameter_type>)
-```
-
-Also in typescript we can pass exact same number of parameters which are defined in fcuntion definition
-
-Default parameter
+### Parameter Annotations
 
 ```typescript
-     function <fun_name>(<parameter_name>:<parameter_type>="<default_value>")
-
-     function greet (name : string= "Anonymus")
-```
-
-Return type
-
-```typescript
-     function <fun_name>(<parameter_name>:<parameter_type>):<return_type>
-
-     function increment(num : number) : number
-     function greet(name : string) : void
-```
-
-Never keyword in function return
-Its used when function is not returning anything
-When variable will not have any value
-Help to catch error at compile time
-
-Use cases:
-A funtion that always throws error
-
-```typescript
-function throwErr(msg: string): never {
-  throw new Error(msg);
+function functionName(paramName: paramType): returnType {
+  // Function body
 }
 ```
 
-A function that has infinite loop
+### Default Parameters
 
 ```typescript
+function greet(name: string = "Anonymous"): void {
+  console.log(`Hello ${name}`);
+}
+```
+
+### Never Type
+
+Used for functions that never return or always throw errors:
+
+```typescript
+// Function that throws error
+function throwError(message: string): never {
+  throw new Error(message);
+}
+
+// Infinite loop
 function infiniteLoop(): never {
   while (true) {}
 }
 ```
 
-A variable that can never have a value
+## Arrays
 
 ```typescript
-let x = never;
-function neverReturn(): never {
-  while (true) {}
+// Two ways to declare arrays
+const numbers: number[] = [1, 2, 3];
+const strings: Array<string> = ["a", "b", "c"];
+
+// Multidimensional arrays
+const matrix: number[][] = [
+  [1, 2],
+  [3, 4],
+];
+```
+
+## Objects
+
+```typescript
+// Object type annotation
+const person: {
+  firstName: string;
+  lastName: string;
+  age: number;
+} = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 30,
+};
+```
+
+## Type Aliases
+
+Create custom reusable types:
+
+```typescript
+type Person = {
+  name: string;
+  age: number;
+  email?: string; // Optional property
+};
+
+function printPerson(person: Person): void {
+  console.log(`Name: ${person.name}, Age: ${person.age}`);
 }
-x = neverReturn();
 ```
 
----
+## Advanced Types
 
-Array
+### Intersection Types
 
-```typescript
-//1.
-const num: number[] = [1, 2, 3];
-//2.
-const items: Array<string> = [];
-```
-
-Multidimentional array
+Combine multiple types:
 
 ```typescript
-const num: number[][] = [[1], [2], [3]];
-```
-
----
-
-Objects
-
-types varName : (annotation / type) = {property : value}
-
-```typescript
-const person: { firstName: string; lastName: string; age: number } = {
-  firstName: "Hemant",
-  lastName: "Yadav",
-  age: 19,
-};
-```
-
-function returning object
-
-```typescript
-     const printUser(): {firstName:string; lastName:string; age:number} = {return {firstName:'Hemant', lastName:'Yadav', age:19,}; }
-```
-
----
-
-Type Aliases
-For creating custom type
-Uses existing types to define new one
-
-```typescript
-type Person = {
-  name: string;
-  age: number;
-};
-
-function printDetails(person: Person) {
-  Console.log(`Name:${person.name}, Age:${person.age}`);
-}
-
-const myPerson: Person = { name: "Hemant", age: 22 };
-printDetails(myPerson);
-```
-
----
-
-Optional Properties
-add '?' to make that property optional
-
-```typescript
-type Person = {
-  name: string;
-  age: number;
-  email?: string;
-};
-```
-
----
-
-Intersection types
-Add two types in one
-
-```typescript
-type Person = {
-  name: string;
-  age: number;
-};
 type Employee = {
   id: string;
   title: string;
 };
 
-type PersonEmoloyee = Person & Employee;
-
-const PE1: PersonEmoloyee = {
-  name: "Hemant",
-  age: 22,
-  id: "www",
-  title: "www",
-};
+type PersonEmployee = Person & Employee;
 ```
 
----
+### Union Types
 
-Unions
-A type which have one or more possible types
-Allow variable or parameter to aceept multiple types
-'|'
+Allow multiple type options:
 
 ```typescript
-let vvar: string | string[];
+type StringOrNumber = string | number;
+let value: StringOrNumber = "hello";
+value = 42; // Also valid
+```
 
-function foo(param: string | string[]) {}
+## Tuples
 
-interface myInterface {
-  newProp: string | number;
+Fixed-length arrays with specific types:
+
+```typescript
+let userInfo: [string, number, boolean] = ["John", 30, true];
+let [name, age, isAdmin] = userInfo; // Destructuring
+```
+
+## Enums
+
+```typescript
+enum Status {
+  Active = "ACTIVE",
+  Inactive = "INACTIVE",
+  Pending = "PENDING",
 }
 
-type Person = {
-  name: string;
-  age: number;
-};
-type Employee = {
-  id: string;
-  title: string;
-};
-
-type PersonEmoloyee = Person | Employee;
-
-const PE1: PersonEmoloyee = {
-  name: "Hemant",
-  title: "www",
-};
-
-const item: number | string[] = [1, 2, 3, 4, "hi", "hello"];
+console.log(Status.Active); // "ACTIVE"
 ```
 
----
-
-Tuples
-Array with fixed number of elements
-Each element can have diffrent types
-The order of actual values must be same as the defined in types
-
-```typescript
-let myTuple: [number, string, number] = [19, "Hwllo", 87];
-Console.log(myTuple[0]);
-Console.log(myTuple[1]);
-```
-
-Destructuring of tuples
-
-```typescript
-let myTuple: [number, string, number] = [19, "Hwllo", 87];
-let [first, second, third] = myTuple;
-Console.log(first);
-Console.log(second);
-Console.log(third);
-```
-
----
-
-Enum
-Define set of named constants
-Allow you to define collection of relted values
-If value not assigned for key it returns the index position
-
-```typescript
-enum WeatherCondition {
-  Sunny,
-  Cloudy,
-  Rainy,
-  Snowy,
-}
-
-Console.log(WeatherCondition.Rainy); // 2 i.e. index position
-
-enum WeatherCondition {
-  Sunny = "sunny",
-  Cloudy = "cloudy",
-  Rainy = "rainy",
-  Snowy = "snowy",
-}
-
-Console.log(WeatherCondition.Rainy); // rainy
-```
-
----
-
-OOPs
-
-```typescript
-class Person {
-  name: string;
-  age: number;
-
-  constructor(name: string, age: number) {
-    this.name = name;
-    this.age = age;
-  }
-}
-```
-
-Access Modifiers
-Public
-Private
-Protected
+## Classes
 
 ```typescript
 class Person {
   public name: string;
   private age: number;
-  protected call: number;
+  protected phone: number;
 
-  constructor(name: string, age: number, call: number) {
+  constructor(name: string, age: number, phone: number) {
     this.name = name;
     this.age = age;
-    this.call = call;
+    this.phone = phone;
   }
 
   getAge(): number {
     return this.age;
   }
-
-  getCall(): number {
-    return this.call;
-  }
 }
 
-let p1 = new Person("hem", 12, 1234567);
-console.log(p1.name);
-console.log(p1.getAge());
-console.log(p1.getCall());
-
+// Inheritance
 class Employee extends Person {
-  constructor(name: string, age: number, call: number) {
-    super(name, age, call);
+  constructor(name: string, age: number, phone: number) {
+    super(name, age, phone);
   }
 }
-let p11 = new Employee("he22m", 12, 1234567);
-console.log(p11.getCall());
 ```
 
-Getters & Setters
+### Getters & Setters
+
 ```typescript
-class MyClass{
-     private num: number;
+class Counter {
+  private _value: number = 0;
 
-     get getNum(): number{
-          return this.num
-     }
+  get value(): number {
+    return this._value;
+  }
 
-     set setNum(numVal: number){
-          this.num = numVal   
-     }
+  set value(newValue: number) {
+    if (newValue >= 0) {
+      this._value = newValue;
+    }
+  }
 }
+
+const Obj = new Counter();
+Console.log(Obj.value); // 0
+Obj.value = 11;
+Console.log(Obj.value); // 11
 ```
+
+---
+
+### Interface
+
+It spacifies the properties and methods that a class should implement
+Must have all properties
+
+Interfaces can also be used to describe the shape of function and classes
+
+```typescript
+//Interface Definition
+
+interface Person {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
+const person: Person = {
+  firstName: "hem",
+  lastName: "ydv",
+  age: 12,
+};
+
+
+//Interface for functioon
+intefce MathFunction {
+  (num1:number , num2:number): number;
+}
+
+const add: MathFunction = (num1, num2) => a+b;
+
+const addition = add(1, 2);
+
+
+//Interface for classses
+interface Employee {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
+class Employee implements Employee {
+  firstName: string;
+  lastName: string;
+  age: number;
+
+  constructor(firstName: string, lastName: string, age: number){
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.age = age;
+  }
+
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+const employee = new Employee("John", "Doe", 30);
+console.log(employee.fullName); // Output: "John Doe"
+```
+
+#### Declaration Merging
+
+TypeScipt allows you to merge multiple declarations of the same name into a single definition. This is particularly useful when working with interfaces, classes, and modules.
+
+Declaration merging / interface extension / re-opening
+
+Ability to extend or argument an existing declaration including interfaces.
+Useful when you want to add new properties or methods to an existing type without modifying the original definition.
+
+```typescript
+interface Person {
+  firstName: string;
+}
+
+interface Person {
+  lastName: string;
+}
+
+const person: Person = {
+  firstName: "hem",
+  lastName: "ydv",
+};
+```
+
+---
+
+### Generics
+
+Allows you to create reusable components that can work with diffrent data types while maintaining type safety.
+Possible to define a generic class, interface or function.
+
+```typescript
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+const str = identity<string>("hem");
+const num = identity<number>(11);
+const bool = identity<boolean>(true);
+```
+
+Interface with generic function
+
+```typescript
+interface Dog {
+  name: string;
+  breed: string;
+}
+
+function uniqueFunc<T>(arg: T): T {
+  return arg;
+}
+
+const dog1 = uniqueFunc<Dog>({ name: "Buddy", breed: "Labrador" }); // { name: 'Buddy', breed: 'Labrador' }
+```
+
+#### IMP
+
+```typescript
+function getRandomKeyValuePair<T>(obj: { [key: string]: T }): {
+  key: string;
+  value: T;
+} {
+  const keys = Object.keys(obj);
+  const randomIndex = Math.floor(Math.random() * keys.length);
+  const randomKey = keys[randomIndex];
+  const randomValue = obj[randomKey];
+  return { key: randomKey, value: randomValue };
+}
+
+const obj = { a: 1, b: 2, c: 3 };
+const randomPair = getRandomKeyValuePair(obj); // { key: 'b', value: 2 }
+```
+
+#### Explaination
+
+```typescript
+function getRandomKeyValuePair<T>(obj: { [key: string]: T });
+```
+
+Here’s what’s happening:
+
+1. Generic Type `<T>`
+
+- `<T>` is a type parameter that acts as a placeholder for any data type.
+
+- This makes the function work with any type of object values, instead of being limited to a specific type (like string or number).
+
+2. Function Parameter `obj: { [key: string]: T }`
+
+- The function takes an object where:
+  - Keys are string
+  - Values can be of any type T, determined when calling the function.
+
+3. Return Type `{ key: string; value: T }`
+
+- The function returns a randomly selected key-value pair.
+- The value will have the same type T as in the input object.
+
+Example Usage
+
+```typescript
+const stringObject = { a: "apple", b: "banana", c: "cherry" };
+const res = getRandomKeyValuePair<string>(stringObject);
+console.log(res);
+```
+
+- The function is called with <string>, meaning T is inferred as string.
+- So, the return type will be { key: string, value: string }.
+
+##### Why Use Generics?
+
+- Code Reusability: The function can be used for objects with different value types, not just strings.
+- Type Safety: If you pass an object with number values, TypeScript ensures the returned value is a number.
+
+##### Example with Different Types
+
+_Numbers_
+
+```typescript
+const numberObject = { x: 10, y: 20, z: 30 };
+const resNum = getRandomKeyValuePair<number>(numberObject);
+console.log(resNum);
+```
+
+Here, `T = number`, so value will always be a number.
+
+_Booleans_
+
+```typescript
+const boolObject = { isOn: true, isActive: false, isDone: true };
+const resBool = getRandomKeyValuePair<boolean>(boolObject);
+console.log(resBool);
+```
+
+Here, `T = boolean`, ensuring type safety.
+
+#### why key is given type as string
+
+In the function `getRandomKeyValuePair<T>(obj: { [key: string]: T })`, the key is explicitly given the type `string` because JavaScript object keys are always strings (or Symbols).
+
+##### Explanation
+
+Object keys are always strings (or Symbols).
+
+- Even if you define a key as a number, JavaScript internally converts it to a string.
+- Example:
+
+```typescript
+const obj = { 1: "one", 2: "two" };
+console.log(Object.keys(obj)); // Output: ['1', '2']
+```
+
+Notice how the numeric keys 1 and 2 are converted to string
+
+---
