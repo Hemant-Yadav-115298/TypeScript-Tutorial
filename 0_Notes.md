@@ -221,7 +221,7 @@ Console.log(Obj.value); // 11
 
 ---
 
-### Interface
+## Interface
 
 It spacifies the properties and methods that a class should implement
 Must have all properties
@@ -281,7 +281,7 @@ const employee = new Employee("John", "Doe", 30);
 console.log(employee.fullName); // Output: "John Doe"
 ```
 
-#### Declaration Merging
+### Declaration Merging
 
 TypeScipt allows you to merge multiple declarations of the same name into a single definition. This is particularly useful when working with interfaces, classes, and modules.
 
@@ -307,7 +307,7 @@ const person: Person = {
 
 ---
 
-### Generics
+## Generics
 
 Allows you to create reusable components that can work with diffrent data types while maintaining type safety.
 Possible to define a generic class, interface or function.
@@ -337,7 +337,7 @@ function uniqueFunc<T>(arg: T): T {
 const dog1 = uniqueFunc<Dog>({ name: "Buddy", breed: "Labrador" }); // { name: 'Buddy', breed: 'Labrador' }
 ```
 
-#### IMP
+### IMP
 
 ```typescript
 function getRandomKeyValuePair<T>(obj: { [key: string]: T }): {
@@ -355,7 +355,7 @@ const obj = { a: 1, b: 2, c: 3 };
 const randomPair = getRandomKeyValuePair(obj); // { key: 'b', value: 2 }
 ```
 
-#### Explaination
+### Explaination
 
 ```typescript
 function getRandomKeyValuePair<T>(obj: { [key: string]: T });
@@ -391,12 +391,12 @@ console.log(res);
 - The function is called with <string>, meaning T is inferred as string.
 - So, the return type will be { key: string, value: string }.
 
-##### Why Use Generics?
+#### Why Use Generics?
 
 - Code Reusability: The function can be used for objects with different value types, not just strings.
 - Type Safety: If you pass an object with number values, TypeScript ensures the returned value is a number.
 
-##### Example with Different Types
+#### Example with Different Types
 
 _Numbers_
 
@@ -422,7 +422,7 @@ Here, `T = boolean`, ensuring type safety.
 
 In the function `getRandomKeyValuePair<T>(obj: { [key: string]: T })`, the key is explicitly given the type `string` because JavaScript object keys are always strings (or Symbols).
 
-##### Explanation
+#### Explanation
 
 Object keys are always strings (or Symbols).
 
@@ -437,3 +437,59 @@ console.log(Object.keys(obj)); // Output: ['1', '2']
 Notice how the numeric keys 1 and 2 are converted to string
 
 ---
+
+#### Eg: Generic filter function
+
+```typescript
+function filterArray<T>(array: T[], condition: (item: T) => boolean): T[] {
+  return array.filter((item)=> condition(item));
+}
+
+const num = [1,2,3,4,5,6,7,8,9,10];
+const evenNum = filterArray(num, (item) => item % 2 === 0);
+console.log(evenNum); // [2, 4, 6, 8, 10]
+
+const str = ["apple", "banana", "cherry", "date"];
+const longStr = filterArray(str, (item) => item.length > 5);
+console.log(longStr); // ['banana', 'cherry']
+
+const bool = [true, false, true, false, true];
+const trueBool = filterArray(bool, (item) => item === true);
+console.log(trueBool); // [true, true, true]
+
+```
+
+### Multiple generic type peremeter
+  
+```typescript
+function reversePair<T, U>(var1: T, var2: U): [T , U] {
+  return [var1, var2];
+}
+
+const pair1 = reversePair(10, "apple"); // [10, 'apple']
+```
+
+### Generic Classes
+
+```typescript
+class Box<T>{
+  private _value: T;
+
+  constructor(value: T){
+    this._value = value;
+  }
+
+  getValue(): T {
+    return this._value;
+  }
+
+  setValue(newValue: T): void {
+    this._value = newValue;
+  }
+}
+
+const numberBox = new Box<number>(10);
+console.log(numberBox.getValue()); // 10
+numberBox.setValue(20);
+console.log(numberBox.getValue()); // 20
+```
